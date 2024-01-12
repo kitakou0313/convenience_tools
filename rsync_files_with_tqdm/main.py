@@ -7,35 +7,28 @@ def rsync_copy(source, destination):
     command = ["rsync", "-a", source, destination]
     subprocess.run(command, check=True)
 
-def copy_files_recursive(source_dir, destination_dir):
-    # Ensure source directory exists
-    if not os.path.exists(source_dir):
-        print(f"Error: Source directory '{source_dir}' does not exist.")
-        return
+def copy_files(source, destinations:list):
+    all_items = []
+    for root, dirs, files in os.walk(source):
+        for item in dirs + files:
+            item_path = os.path.join(root, item)
+            relative_path = os.path.relpath(item_path, source)
+            all_items.append((item_path, relative_path))
 
-    # Create destination directory if it doesn't exist
-    os.makedirs(destination_dir, exist_ok=True)
-
-    # Walk through the source directory and copy files
-    for root, _, files in os.walk(source_dir):
-        for file in tqdm(files, desc="Copying files", unit="file"):
-            source_path = os.path.join(root, file)
-            relative_path = os.path.relpath(source_path, source_dir)
-            destination_path = os.path.join(destination_dir, relative_path)
-
-            # Ensure the destination directory exists
-            os.makedirs(os.path.dirname(destination_path), exist_ok=True)
-
-            # Copy the file using rsync
-            rsync_copy(source_path, destination_path)
+    # Use tqdm to display a progress bar for each file and each destination
+    for source_path, relative_path in tqdm(all_items, desc="Copying files", unit="item"):
+        for destination in destinations:
+            dest_path = os.path.join(destination, relative_path)
+            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+            rsync_copy(source_path, dest_path)
 
 def main():
-    parser = argparse.ArgumentParser(description="Recursive rsync file copy with progress")
+    parser = argparse.ArgumentParser(description="Copy files and directories with progress bar using rsync to multiple destinations")
     parser.add_argument("source", help="Source directory path")
-    parser.add_argument("destination", help="Destination directory path")
+    parser.add_argument("destinations", nargs="+", help="List of destination directory paths")
     args = parser.parse_args()
 
-    copy_files_recursive(args.source, args.destination)
+    copy_files(args.source, args.destinations)
 
 if __name__ == "__main__":
     main()
