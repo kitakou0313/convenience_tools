@@ -15,6 +15,10 @@ def copy_files(source, destinations:list):
             relative_path = os.path.relpath(item_path, source)
             all_items.append((item_path, relative_path))
 
+    for source_path, relative_path in all_items:
+        for destination in destinations:
+            print("{} is copied to {}".format(source_path, os.path.join(destination, relative_path)))
+
     # Use tqdm to display a progress bar for each file and each destination
     for source_path, relative_path in tqdm(all_items, desc="Copying files", unit="item"):
         for destination in destinations:
@@ -27,6 +31,8 @@ def main():
     parser.add_argument("source", help="Source directory path")
     parser.add_argument("destinations", nargs="+", help="List of destination directory paths")
     args = parser.parse_args()
+
+    print(args)
 
     copy_files(args.source, args.destinations)
 
