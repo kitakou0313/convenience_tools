@@ -19,8 +19,9 @@ def copy_files(source, destinations:list):
         for destination in destinations:
             print("{} is copied to {}".format(source_path, os.path.join(destination, relative_path)))
 
+    miniters = len(all_items) // 10000
     # Use tqdm to display a progress bar for each file and each destination
-    for source_path, relative_path in tqdm(all_items, desc="Copying files", unit="item"):
+    for source_path, relative_path in tqdm(all_items, desc="Copying files", unit="item", miniters=miniters):
         for destination in destinations:
             dest_path = os.path.join(destination, relative_path)
             os.makedirs(os.path.dirname(dest_path), exist_ok=True)
