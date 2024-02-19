@@ -4,7 +4,7 @@ import argparse
 from tqdm import tqdm
 
 def rsync_copy(source, destination):
-    command = ["rsync", "-a", source, destination]
+    command = ["rsync", "-rlptD", source, destination]
     subprocess.run(command, check=True)
 
 def copy_files(source, destinations:list, min_iter_num):
