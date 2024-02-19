@@ -10,4 +10,4 @@ format_file="$1"
 shift
 dest_paths="$@"
 
-docker compose -f "${format_file}" run -d --rm rsync bash -c "python main.py ${source_path} ${min_iter_num} log_${log_file_name}.txt ${dest_paths[@]}"
+docker compose -f "${format_file}" run -d --rm rsync bash -c "python -u main.py ${source_path} ${min_iter_num} log_${log_file_name}.txt ${dest_paths[@]}"
