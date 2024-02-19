@@ -2,6 +2,7 @@ import os
 import subprocess
 import argparse
 from tqdm import tqdm
+import sys
 
 def rsync_copy(source, destination):
     command = ["rsync", "-lptD", source, destination]
@@ -29,8 +30,14 @@ def main():
     parser = argparse.ArgumentParser(description="Copy files and directories with progress bar using rsync to multiple destinations")
     parser.add_argument("source", help="Source directory path")
     parser.add_argument("min_iter_num", type=int, help="min iter num")
+    parser.add_argument("log_file", type=str, help="log file")
     parser.add_argument("destinations", nargs="+", help="List of destination directory paths")
     args = parser.parse_args()
+
+    log_file = open(args.log_file, 'w')
+
+    sys.stdout = log_file 
+    sys.stderr = log_file
 
     print(args)
 
